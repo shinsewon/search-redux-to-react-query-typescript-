@@ -19,17 +19,16 @@ export function createAction(type, payload?) {
   return payload !== undefined ? { type, payload } : { type };
 }
 
-export default function createReducer<
-  S,
-  T extends string,
-  A extends TypedAction<T>,
->(
+export function createReducer<S, T extends string, A extends TypedAction<T>>(
   initialState: S,
   handlerMap: {
     [key in T]: (state: Draft<S>, action: Extract<A, TypedAction<key>>) => void;
   },
 ) {
-  return (state: S = initialState, action: Extract<A, TypedAction<T>>) => {
+  return function (
+    state: S = initialState,
+    action: Extract<A, TypedAction<T>>,
+  ) {
     return produce(state, (draft) => {
       const handler = handlerMap[action.type];
       if (handler) {
